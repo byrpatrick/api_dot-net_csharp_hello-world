@@ -29,10 +29,10 @@ namespace HelloworldApplication
       services.AddCors(options =>
       {
         options.AddDefaultPolicy(
-              builder =>
-              {
-                builder.AllowAnyOrigin();
-              });
+            builder =>
+            {
+              builder.WithOrigins("http://localhost:4040");
+            });
       });
       services.AddControllers();
     }
