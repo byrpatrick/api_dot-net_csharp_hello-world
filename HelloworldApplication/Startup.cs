@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace HelloworldApplication
 {
@@ -18,6 +19,13 @@ namespace HelloworldApplication
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                      .AddJwtBearer(options =>
+                      {
+                        options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
+                        options.Audience = Configuration["Auth0:Audience"];
+                      });
+
       services.AddCors(options =>
       {
         options.AddDefaultPolicy(
@@ -40,6 +48,9 @@ namespace HelloworldApplication
       app.UseHttpsRedirection();
       app.UseRouting();
       app.UseCors();
+
+      app.UseAuthentication();
+      app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>
       {

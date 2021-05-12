@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HelloworldApplication.Controllers
 {
@@ -17,12 +18,14 @@ namespace HelloworldApplication.Controllers
     }
 
     [HttpGet("protected")]
+    [Authorize]
     public string GetProtectedMessage()
     {
       return protectedMessage;
     }
 
     [HttpGet("admin")]
+    [Authorize]
     public string GetAdminMessage()
     {
       return adminMessage;
