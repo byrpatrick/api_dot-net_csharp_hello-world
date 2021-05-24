@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using HelloworldApplication.Models;
 
 namespace HelloworldApplication.Controllers
 {
@@ -12,23 +13,23 @@ namespace HelloworldApplication.Controllers
     private const string adminMessage = "The API successfully recognized you as an admin.";
 
     [HttpGet("public")]
-    public string GetPublicMessage()
+    public ApiResponse GetPublicMessage()
     {
-      return publicMessage;
+      return new ApiResponse(publicMessage);
     }
 
     [HttpGet("protected")]
     [Authorize]
-    public string GetProtectedMessage()
+    public ApiResponse GetProtectedMessage()
     {
-      return protectedMessage;
+      return new ApiResponse(protectedMessage);
     }
 
     [HttpGet("admin")]
     [Authorize]
-    public string GetAdminMessage()
+    public ApiResponse GetAdminMessage()
     {
-      return adminMessage;
+      return new ApiResponse(adminMessage);
     }
   }
 }
