@@ -23,7 +23,8 @@ namespace HelloworldApplication
         options.AddDefaultPolicy(
               builder =>
               {
-                builder.AllowAnyOrigin();
+                builder.WithOrigins("http://localhost:4040")
+                  .WithHeaders("Authorization"); ;
               });
       });
       services.AddControllers();
