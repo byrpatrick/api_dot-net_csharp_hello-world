@@ -19,21 +19,24 @@ namespace HelloworldApplication
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                      .AddJwtBearer(options =>
-                      {
-                        options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
-                        options.Audience = Configuration["Auth0:Audience"];
-                      });
 
       services.AddCors(options =>
       {
         options.AddDefaultPolicy(
-            builder =>
-            {
-              builder.WithOrigins("http://localhost:4040");
+           builder =>
+           {
+              builder.WithOrigins("http://localhost:4040")
+                 .WithHeaders("Authorization");
             });
       });
+
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+          .AddJwtBearer(options =>
+          {
+            options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
+            options.Audience = Configuration["Auth0:Audience"];
+          });
+
       services.AddControllers();
     }
 
