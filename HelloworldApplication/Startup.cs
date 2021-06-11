@@ -4,6 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using HelloworldApplication.Models;
+using System.Text.Json;
 
 namespace HelloworldApplication
 {
@@ -25,9 +29,9 @@ namespace HelloworldApplication
         options.AddDefaultPolicy(
            builder =>
            {
-              builder.WithOrigins("http://localhost:4040")
-                 .WithHeaders("Authorization");
-            });
+             builder.WithOrigins("http://localhost:4040")
+                .WithHeaders("Authorization");
+           });
       });
 
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -35,6 +39,21 @@ namespace HelloworldApplication
           {
             options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
             options.Audience = Configuration["Auth0:Audience"];
+
+            options.Events = new JwtBearerEvents
+            {
+              OnChallenge = context =>
+              {
+                context.Response.OnStarting(async () =>
+                    {
+                        await context.Response.WriteAsync(
+                            JsonSerializer.Serialize(new ApiResponse("You are not authorized!"))
+                            );
+                  });
+
+                return Task.CompletedTask;
+              }
+            };
           });
 
       services.AddControllers();
