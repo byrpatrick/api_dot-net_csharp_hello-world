@@ -4,6 +4,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
+using System.Text.Json;
+using HelloworldApplication.Models;
+using System.Threading.Tasks;
 
 namespace HelloworldApplication
 {
@@ -20,11 +24,26 @@ namespace HelloworldApplication
     public void ConfigureServices(IServiceCollection services)
     {
       services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                      .AddJwtBearer(options =>
-                      {
-                        options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
-                        options.Audience = Configuration["Auth0:Audience"];
-                      });
+          .AddJwtBearer(options =>
+          {
+            options.Authority = $"https://{Configuration["Auth0:Domain"]}/";
+            options.Audience = Configuration["Auth0:Audience"];
+
+            options.Events = new JwtBearerEvents
+            {
+              OnChallenge = context =>
+              {
+                context.Response.OnStarting(async () =>
+                    {
+                      await context.Response.WriteAsync(
+                          JsonSerializer.Serialize(new ApiResponse("You are not authorized!"))
+                      );
+                    });
+
+                return Task.CompletedTask;
+              }
+            };
+          });
 
       services.AddCors(options =>
       {
