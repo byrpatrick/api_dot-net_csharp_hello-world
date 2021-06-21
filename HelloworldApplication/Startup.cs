@@ -46,15 +46,26 @@ namespace HelloworldApplication
               {
                 context.Response.OnStarting(async () =>
                     {
-                        await context.Response.WriteAsync(
-                            JsonSerializer.Serialize(new ApiResponse("You are not authorized!"))
-                            );
-                  });
+                      await context.Response.WriteAsync(
+                          JsonSerializer.Serialize(new ApiResponse("You are not authorized!"))
+                          );
+                    });
 
                 return Task.CompletedTask;
               }
             };
           });
+
+      services.AddAuthorization(options =>
+      {
+        options.AddPolicy("Admin", policy =>
+              policy.RequireAssertion(context =>
+                  context.User.HasClaim(c =>
+                      (c.Type == "permissions" &&
+                      c.Value == "read:admin-messages") &&
+                      c.Issuer == $"https://{Configuration["Auth0:Domain"]}/")));
+
+      });
 
       services.AddControllers();
     }

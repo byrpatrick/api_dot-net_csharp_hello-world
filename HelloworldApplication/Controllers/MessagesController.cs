@@ -26,7 +26,7 @@ namespace HelloworldApplication.Controllers
     }
 
     [HttpGet("admin")]
-    [Authorize]
+    [Authorize(Policy = "Admin")]
     public ApiResponse GetAdminMessage()
     {
       return new ApiResponse(adminMessage);
