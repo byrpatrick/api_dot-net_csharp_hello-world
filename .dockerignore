@@ -1,0 +1,6 @@
+bin
+obj
+.git/
+Makefile
+README.md
+.gitignore
